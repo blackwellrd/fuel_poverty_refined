@@ -104,3 +104,5 @@ df_fp_refined <- df_fp %>% left_join(df_oa11_lsoa11_msoa11 %>% select(oa11cd, ls
   mutate(combined_decile = ntile(combined_rank, n = 10))
 
 write.csv(df_fp_refined, 'fp_refined.csv')
+
+zip('fp_refined.zip', 'fp_refined.csv', flags = "-m")
