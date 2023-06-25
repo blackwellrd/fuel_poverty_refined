@@ -91,10 +91,10 @@ df_fp <- df_fp %>%
 
 # Create the output area level data by joining with the oa11 to lsoa11 lookup data
 df_fp_refined <- df_fp %>% left_join(df_oa11_lsoa11_msoa11 %>% select(oa11cd, lsoa11cd), by = 'lsoa11cd') %>%
-  select(oa11cd, pct_households_in_fp) %>%
+  select(oa11cd, lsoa11cd, pct_households_in_fp) %>% 
   left_join(df_uc, by = 'oa11cd') %>%
   left_join(df_pc, by = 'oa11cd') %>%
-  rename_with(.fn = function(x){c('oa11cd','fp','uc','pc')}) %>%
+  rename_with(.fn = function(x){c('oa11cd','lsoa11cd','fp','uc','pc')}) %>%
   mutate(fp_rank = rank(desc(fp), ties.method = 'average'),
          uc_rank = rank(desc(uc), ties.method = 'average'),
          pc_rank = rank(desc(pc), ties.method = 'average')) %>%
