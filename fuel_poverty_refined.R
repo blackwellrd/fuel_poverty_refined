@@ -1,108 +1,91 @@
-#####################################################################
+#*******************************************************************#
 #                                                                   #
 # File: fuel_poverty_refined.R                                      #
 # Desc: Refine the BEIS sub-regional fuel poverty England 2022 with #
-#       the DWP Universal and Pensions Credit data at output area.  #
+#       the NOMIS 2021 Census data on household deprivation.        #
 # Auth: Richard Blackwell                                           #
-# Date: 2023-06-18                                                  #
+# Date: 2027-06-18                                                  #
 #                                                                   #
-#####################################################################
+#*******************************************************************#
 
-# ==============
-# Load libraries
-# ==============
+# 1. Load libraries ----
+# **********************
 library(tidyverse)
 library(readxl)
 
-# =========
-# Load data
-# =========
-# Fuel poverty
-# ------------
-df_fp <- read_excel(path = '.\\data\\fp\\sub-regional-fuel-poverty-tables-2023-2021-data.xlsx', 
-                    sheet = 'Table 3',
+# 2. Load data ----
+# *****************
+
+fuel_poverty_excel_workbook <- './data/fp/sub-regional-fuel-poverty-tables-2023-2021-data.xlsx'
+fuel_poverty_excel_worksheet <- 'Table 3'
+household_deprivation_csvfile <- './data/census/census2021-ts011-oa.csv'
+
+# * 2.1. Fuel poverty ----
+# ````````````````````````
+# Read in the LSOA level fuel poverty data from the Table 3 worksheet 
+# ignoring the first 2 lines. Select only the essential fields and rename them, 
+# and finally filter to English LSOAs only
+df_fp <- read_excel(path = fuel_poverty_excel_workbook, 
+                    sheet = fuel_poverty_excel_worksheet,
                     skip = 2) %>%
   select(1, 6:7) %>%
-  rename_with(.fn = function(x){c('lsoa21cd', 'households', 'households_in_fp')})
+  rename_with(.fn = ~c('lsoa21cd', 'households', 'households_in_fp')) %>%
+  filter(grepl('^E',lsoa21cd))
 
-# Universal credit
-# ----------------
-df_uc <- read.csv('.\\data\\uc\\england_uc_oa.csv', skip = 11, header = FALSE) %>%
-  select(1, seq(2,25,2)) %>%
-  rename_with(.fn = function(x){c('oa11cd', paste0('m', str_sub(paste0('0', c(1:12)), -2)))})
-df_uc <- df_uc %>% 
-  slice_head( n = which(df_uc$oa11cd=='Total')-1 ) %>%
-  mutate(across(.cols = 2:13, as.integer))
-df_uc[is.na(df_uc)] <- 0
-df_uc$median_uc <- apply(df_uc[,2:13], 1, median)
-df_uc <- df_uc %>% select(oa11cd, median_uc)
+# * 2.2. Household deprivation ----
+# `````````````````````````````````
+# Read in the OA level household deprivation data, select only the essential
+# fields and rename them. Finally calculate the percentage of households deprived 
+# in zero through to all four domains.
+df_hd <- read.csv(household_deprivation_csvfile, header = TRUE) %>% 
+  select(-c(1, 3)) %>%
+  rename_with(.fn = ~c('oa21cd', 'households', 'dim_0', 'dim_1', 'dim_2', 'dim_3', 'dim_4')) %>%
+  mutate(across(.cols = 3:7, .fns = ~.x/households, .names = 'pct_{.col}')) %>%
+  select(-c(3:7))
 
-# Pension credit
-# --------------
-df_pc <- read.csv('.\\data\\pc\\england_pc_oa.csv', skip = 11, header = FALSE) %>%
-  select(1, seq(2,9,2)) %>%
-  rename_with(.fn = function(x){c('oa11cd', paste0('q', str_sub(paste0('0', c(1:4)), -2)))})
-df_pc <- df_pc %>% 
-  slice_head( n = which(df_pc$oa11cd=='Total')-1 ) %>%
-  mutate(across(.cols = 2:5, as.integer))
-df_pc[is.na(df_pc)] <- 0
-df_pc$median_pc <- apply(df_pc[,2:5], 1, median)
-df_pc <- df_pc %>% select(oa11cd, median_pc)
+# * 2.3. OA21 to LSOA21 lookup ----
+# `````````````````````````````````
+# Read in the OA21 to LSOA21 lookup, keeping only the essential fields and rename them.
+df_oa21_lsoa21_msoa21 <- read.csv('.\\data\\lu\\Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv') %>% 
+  select(1, 2, 5, 9) %>%
+  rename_with(.fn = ~c('oa21cd', 'lsoa21cd', 'msoa21cd', 'lad22nm'))
 
-# LSOA11 to LSOA21 lookup
-# -----------------------
-df_lsoa11_lsoa21 <- read.csv('.\\data\\lu\\LSOA_(2011)_to_LSOA_(2021)_to_Local_Authority_District_(2022)_Lookup_for_England_and_Wales.csv') %>%
-  select(1, 3, 5) %>%
-  rename_with(.fn = function(x){c('lsoa11cd', 'lsoa21cd', 'chgind')}) %>%
-  filter(grepl('^E', lsoa11cd))
+# 3. Process the fuel poverty risk data ----
+# ******************************************
 
-df_lsoa11_lsoa21 <- df_lsoa11_lsoa21 %>% 
-  filter(!(lsoa11cd %in% c('E01008187','E01023508','E01023679','E01023768','E01023964','E01027506'))) %>%
-  bind_rows(
-    data.frame(lsoa11cd = c('E01008187','E01023508','E01023679','E01023768','E01023964','E01027506'),
-               lsoa21cd = c('E01035624','E01035609','E01035581','E01035582','E01035608','E01035637'),
-               chgind = rep('X',6)))
-
-# OA11 to LSOA11 lookup
-# ---------------------
-df_oa11_lsoa11_msoa11 <- read.csv('.\\data\\lu\\Output_Area_to_Lower_Layer_Super_Output_Area_to_Middle_Layer_Super_Output_Area_to_Local_Authority_District_(December_2011)_Lookup_in_England_and_Wales.csv') %>%
-  select(1, 2, 4) %>%
-  rename_with(.fn = function(x){c('oa11cd', 'lsoa11cd', 'msoa11cd')})
-
-# ===========================
-# Convert 2021 data into 2011
-# ===========================
-
-# If unchanged or if the 2011 LSOAs were merged into a 2021 LSOA then the 2021 data can be assigned to the 
-# 2011 LSOA.
+# Join the LSOA level fuel poverty data to the OA21 to LSOA21 lookup to obtain OA level fuel poverty data
 df_fp <- df_fp %>% 
-  inner_join(df_lsoa11_lsoa21 %>% filter(chgind!='S') %>% select(-chgind), by = 'lsoa21cd') %>% 
-  select(lsoa11cd, households, households_in_fp) %>%
-  bind_rows(
-    # If the 2011 LSOAs were split into a number of 2021 LSOA then the 2021 data can be assigned to the 
-    # 2011 LSOA by taking an average of the 2021 areas
-    df_fp %>% inner_join(df_lsoa11_lsoa21 %>% filter(chgind=='S') %>% select(-chgind), by = 'lsoa21cd') %>% 
-      select(lsoa11cd, households, households_in_fp) %>% 
-      group_by(lsoa11cd) %>%
-      summarise(households = sum(households), households_in_fp = sum(households_in_fp)) %>%
-      ungroup()
-  ) %>%
-  mutate(pct_households_in_fp = households_in_fp / households)
+  inner_join(df_oa21_lsoa21_msoa21, by = 'lsoa21cd') %>% 
+  # and then join to the household deprivation data
+  inner_join(df_hd, by = 'oa21cd') %>%
+  transmute(oa21cd, lsoa21cd, msoa21cd, lad22nm, 
+            households_lsoa = households.x, households_in_fp, fp_pct = households_in_fp/households.x,
+            households_oa = households.y, hd_pct_0 = pct_dim_0,
+            hd_pct_1 = pct_dim_1, hd_pct_2 = pct_dim_2,
+            hd_pct_3 = pct_dim_3, hd_pct_4 = pct_dim_4) %>%
+  # Order by fuel poverty, then most deprived in 4 dimension, 3, 2, 1 all descending and finally zero ascending
+  arrange(desc(fp_pct), 
+          desc(hd_pct_4), desc(hd_pct_3), 
+          desc(hd_pct_2), desc(hd_pct_1), hd_pct_0) %>%
+  # Add in a rank and a decile for all the variables
+  mutate(
+    fp_rank = rank(desc(fp_pct), ties.method = 'average'),
+    hp4_rank = rank(desc(hd_pct_4), ties.method = 'average'),
+    hp3_rank = rank(desc(hd_pct_3), ties.method = 'average'),
+    hp2_rank = rank(desc(hd_pct_2), ties.method = 'average'),
+    hp1_rank = rank(desc(hd_pct_1), ties.method = 'average'),
+    hp0_rank = rank(desc(hd_pct_4), ties.method = 'average'),
+    overall_rank = seq_along(oa21cd),
+    fp_decile = ntile(desc(fp_pct), n = 10),
+    hp4_decile = ntile(desc(hd_pct_4), n = 10),
+    hp3_decile = ntile(desc(hd_pct_3), n = 10),
+    hp2_decile = ntile(desc(hd_pct_2), n = 10),
+    hp1_decile = ntile(desc(hd_pct_1), n = 10),
+    hp0_decile = ntile(desc(hd_pct_4), n = 10)
+  ) %>% 
+  mutate(overall_decile = ntile(overall_rank, n = 10)) 
 
-# Create the output area level data by joining with the oa11 to lsoa11 lookup data
-df_fp_refined <- df_fp %>% left_join(df_oa11_lsoa11_msoa11 %>% select(oa11cd, lsoa11cd), by = 'lsoa11cd') %>%
-  select(oa11cd, lsoa11cd, pct_households_in_fp) %>% 
-  left_join(df_uc, by = 'oa11cd') %>%
-  left_join(df_pc, by = 'oa11cd') %>%
-  rename_with(.fn = function(x){c('oa11cd','lsoa11cd','fp','uc','pc')}) %>%
-  mutate(fp_rank = rank(desc(fp), ties.method = 'average'),
-         uc_rank = rank(desc(uc), ties.method = 'average'),
-         pc_rank = rank(desc(pc), ties.method = 'average')) %>%
-  mutate(combined_rank = fp_rank + uc_rank + pc_rank) %>%
-  mutate(combined_rank = rank(combined_rank, ties.method = 'average')) %>%
-  arrange(combined_rank) %>%
-  mutate(combined_decile = ntile(combined_rank, n = 10))
-
-write.csv(df_fp_refined, 'fp_refined.csv')
-
+# 4. Output results ----
+# **********************
+write.csv(df_fp, 'fp_refined.csv')
 zip('fp_refined.zip', 'fp_refined.csv', flags = "-m")
