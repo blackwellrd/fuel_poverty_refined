@@ -354,24 +354,130 @@ display: none;
 </div>
 
 
+<div id="fuel-poverty-programme" class="section level1">
+<h1>Fuel Poverty Programme</h1>
+<div id="author-richard-blackwell" class="section level3">
+<h3>Author: Richard Blackwell</h3>
+</div>
+<div id="email-richard.blackwellswahsn.com" class="section level3">
+<h3>Email: <a href="mailto:richard.blackwell@swahsn.com" class="email">richard.blackwell@swahsn.com</a></h3>
+</div>
+<div id="date-2023-08-18" class="section level3">
+<h3>Date: 2023-08-18</h3>
+<hr />
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<div id="fuel-poverty-data" class="section level3">
+<h3>Fuel Poverty data</h3>
+<p>Source: <a href="https://www.gov.uk/government/organisations/department-for-energy-security-and-net-zero">Department
+for Energy Security and Net Zero</a></p>
+<p>Landing Page: <a href="https://www.gov.uk/government/statistics/sub-regional-fuel-poverty-data-2023-2021-data">Sub-Regional
+Fuel Poverty Data</a></p>
+<p>Example Data: <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1153252/sub-regional-fuel-poverty-tables-2023-2021-data.xlsx">2023
+publication (2021 data)</a></p>
+<p>Notes: Total number of households and number of those households in
+fuel poverty by 2021 Lower-layer Super Output Areas (LSOA 2021) using
+2021 modelled data.</p>
+</div>
+<div id="household-deprivation-data" class="section level3">
+<h3>Household Deprivation data</h3>
+<p>Source: <a href="https://www.nomisweb.co.uk/sources/census_2021">NOMIS</a></p>
+<p>Landing Page: <a href="https://www.nomisweb.co.uk/sources/census_2021_bulk">2021 Census
+Bulk Data Download</a></p>
+<p>Example Data: <a href="https://www.nomisweb.co.uk/output/census/2021/census2021-ts011.zip">TS011
+- Households by deprivation dimensions</a></p>
+<p>Notes: The <code>census2021-ts011-oa.csv</code> file in the zip file
+is the file used in the calculation and contains the household
+deprivation data at 2021 Output Area (OA 2021) level.</p>
+</div>
+<div id="output-area-to-2021-lower-layer-super-output-area-lookup-data" class="section level3">
+<h3>2021 Output Area to 2021 Lower-layer Super Output Area lookup
+data</h3>
+<p>Source: <a href="https://geoportal.statistics.gov.uk/">ONS Open
+Geography Portal</a></p>
+<p>Landing Page: <a href="https://geoportal.statistics.gov.uk/search?collection=Dataset&amp;sort=-created&amp;tags=all(LUP_OA_2021)">Output
+Area (2021) Lookups</a></p>
+<p>Example Data: <a href="https://geoportal.statistics.gov.uk/datasets/ons::output-area-to-lower-layer-super-output-area-to-middle-layer-super-output-area-to-local-authority-district-december-2021-lookup-in-england-and-wales-v3/explore">December
+2021 data</a></p>
+<p>Notes: The OA (2021) to LSOA (2021) data is used to link the fuel
+poverty data (published at LSOA 2021 level) to household deprivation
+data (published at OA 2021 level)</p>
+</div>
+<div id="sub-icb-locations-to-integrated-care-boards-to-nhs-england-region-lookup" class="section level3">
+<h3>Sub ICB Locations to Integrated Care Boards to NHS England Region
+Lookup</h3>
+<p>Source: <a href="https://geoportal.statistics.gov.uk/">ONS Open
+Geography Portal</a></p>
+<p>Landing Page: <a href="https://geoportal.statistics.gov.uk/search?collection=Dataset&amp;sort=-created&amp;tags=all(LUP_SICBL_ICB_NHSER)">Sub
+ICB Locations to to Integrated Care Boards to NHS England
+Regions</a></p>
+<p>Example Data: <a href="https://geoportal.statistics.gov.uk/datasets/ons::sub-icb-locations-to-integrated-care-boards-to-nhs-england-region-april-2023-lookup-in-england/explore">April
+2023 data</a></p>
+<p>Notes: This data is used to create the postcode to refined fuel
+poverty risk for individual ICB by NHS England Region output files</p>
+</div>
+<div id="ons-postcode-data" class="section level3">
+<h3>ONS Postcode data</h3>
+<p>Source: <a href="https://geoportal.statistics.gov.uk/">ONS Open
+Geography Portal</a></p>
+<p>Landing Page: <a href="https://geoportal.statistics.gov.uk/search?collection=Dataset&amp;sort=-created&amp;tags=all(PRD_ONSPD%2CMAY_2023)">ONS
+Postcode Directory</a></p>
+<p>Example Data: <a href="https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-may-2023/about">May
+2023 data</a></p>
+<p>Notes: The <code>ONSPD_MAY_2023_UK.csv</code> file in the
+<code>Data</code> directory in the zip file is is used to map active
+postocde to Output Area 2021 in order to map patient’s postcodeto fuel
+poverty risk.</p>
+<hr />
+</div>
+</div>
+<div id="methodology" class="section level2">
+<h2>Methodology</h2>
+<p>The fuel poverty risk is defined as the percentage of households in
+each Lower-layer Super Output Area (2021) deemed to be fuel poor and
+this is linked to the 2021 Census household deprivation data using the
+output area to lower-layer super output area lookup. This linked data is
+then ordered in the following way</p>
+<ul>
+<li>Percentage of households deemed to by fuel poor in
+<strong>descending</strong> order (LSOA level)</li>
+<li>Percentage of households deemed to be deprived in all four
+dimensions of household deprivation used in the 2021 census; education,
+employment, health and housing in <strong>descending</strong> order (OA
+level)</li>
+<li>Percentage of households deemed to be deprived in three of the four
+dimensions of household deprivation in <strong>descending</strong> order
+(OA level)</li>
+<li>Percentage of households deemed to be deprived in two of the four
+dimensions of household deprivation in <strong>descending</strong> order
+(OA level)</li>
+<li>Percentage of households deemed to be deprived in one of the four
+dimensions of household deprivation in <strong>descending</strong> order
+(OA level)</li>
+<li>Percentage of households deemed to be deprived in none of the four
+dimensions of household deprivation in <strong>ascending</strong> order
+(OA level)</li>
+</ul>
+</div>
+</div>
 <div id="refined-fuel-poverty-risk" class="section level1">
 <h1>Refined Fuel Poverty Risk</h1>
 <p><strong>Author:</strong> Richard Blackwell <strong>Date:</strong>
-2023-06-21</p>
+2023-06-27</p>
 <p>A refinement of the <strong><a href="https://www.gov.uk/government/statistics/sub-regional-fuel-poverty-data-2023-2021-data">Department
 of Energy Security and Net Zero - Sub-regional fuel poverty in England
-2023</a></strong> using <strong><a href="https://stat-xplore.dwp.gov.uk/webapi/jsf/login.xhtml">Department
-of Work and Pensions - StatXplorer data for Universal and Pension
-Credit</a></strong> and <strong><a href="https://geoportal.statistics.gov.uk/">Office for National
+2023</a></strong> using <strong><a href="https://www.nomisweb.co.uk/sources/census_2021">NOMIS - Census
+2021 data</a></strong> and <strong><a href="https://geoportal.statistics.gov.uk/">Office for National
 Statistics - Open Geography Portal</a></strong></p>
 <div id="acknowledgements" class="section level3">
 <h3>Acknowledgements</h3>
 <p>Source: Department of Energy Security and Net Zero</p>
-<p>Source: Department of Work and Pensions</p>
+<p>Source: NOMIS Official Census and Labour Market Statistics</p>
 <p>Source: Office for National Statistics licensed under the Open
 Government Licence v.3.0</p>
 </div>
-<div id="methodology" class="section level2">
+<div id="methodology-1" class="section level2">
 <h2>Methodology</h2>
 <ul>
 <li>Datasets
@@ -386,27 +492,19 @@ total number of households and number of households at risk)</li>
 <li>Geography: Lower-layer Super Output Area (LSOA) 2021</li>
 </ul></li>
 </ul></li>
-<li>Source: Department of Work and Pensions
+<li>Source: NOMIS
 <ul>
-<li>Data: Universal Credit
+<li>Data: Household Deprivation
 <ul>
-<li>Measure: Number of people receiving Universal Credit in that
-month</li>
-<li>Period: Jun-22 to May-23 (monthly)</li>
-<li>Geography: Output Area (OA) 2011</li>
-</ul></li>
-<li>Data: Pensions Credit
-<ul>
-<li>Measure: Number of people receiving Pension Credit as at end of
-quarter</li>
-<li>Period: Feb-22 to Nov-22 (quarterly)</li>
-<li>Geography: Output Area (OA) 2011</li>
+<li>Measure: Number households deprived in zero, 1, 2, 3 or all 4
+dimensions</li>
+<li>Period: 2021 Census</li>
+<li>Geography: Output Area (OA) 2021</li>
 </ul></li>
 </ul></li>
 <li>Source: Office for National Statistics
 <ul>
-<li>Data: Lower-layer Super Output Area (LSOA) 2011 to 2021 lookup</li>
-<li>Data: Census Output Area (OA) 2011 to LSOA 2011 lookup</li>
+<li>Data: Census Output Area (OA) 2021 to LSOA 2021 lookup</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -418,38 +516,13 @@ refine the fuel poverty measure but if updates are required or you wish
 add other data to enhance the process the links above will take you to
 the main pages for the data from those organisations.</p>
 </div>
-<div id="standardising-geography-versions" class="section level3">
-<h3>Standardising geography versions</h3>
-<p>As the datasets use different versions of the census output areas
-(2011) and (2021) the second step is to convert the Sub-regional Fuel
-Poverty data from LSOA (2021) to LSOA (2011). The Sub-regional Fuel
-Poverty data consists of the number of households in the LSOA and the
-number of households at risk of fuel poverty in that LSOA</p>
-<p>The census output areas change every 10 years, some of the output
-areas are unchanged, some are split into two or more new output areas,
-some are merged with one or more output areas to create a new output
-area and some have complex boundary changes.</p>
-<p>For those areas that are unchanged the same fuel poverty values will
-be used for the LSOA (2011) as the LSOA (2021).</p>
-<p>For those 2011 areas that were merged into a new 2021 area the fuel
-poverty values will be used for the LSOA (2011) as the LSOA (2021), as
-essentially the 2011 areas created the 2021 area.</p>
-<p>For those 2011 areas that were split into a new 2021 areas the fuel
-poverty values of the new 2021 areas will be combined and those values
-will be used for the LSOA (2011) as the LSOA (2021), as essentially the
-2011 areas created the multiple 2021 areas.</p>
-<p>For those 2011 areas that have complex boundary changes the fuel
-poverty values will be used for the LSOA (2011) as the LSOA (2021), as
-the complex changes are more boundary tweaks rather than splits or
-mergers.</p>
-</div>
 <div id="standardising-geography-areas" class="section level3">
 <h3>Standardising geography areas</h3>
-<p>The third step is to ensure that we has consistancy across
+<p>The next step is to ensure that we has consistancy across
 geographical areas. The fuel poverty data is at LSOA level and the
-Universal Credit and Pension Credit is at OA level. If we use the same
-fuel poverty data for the constituent output areas of the lower-layer
-super output area we will then have all our data at output area.</p>
+census data is at OA level. If we use the same fuel poverty data for the
+constituent output areas of the lower-layer super output area we will
+then have all our data at output area.</p>
 <p>In order to do this we join the output area to lower-layer super
 output area lookup data to the fuel poverty data to add in the output
 area detail.</p>
@@ -458,16 +531,14 @@ area detail.</p>
 <h3>Processing the data</h3>
 <p>The penultimate step is to convert the data into a ranking, this is
 done simply by ordering the data in descending order (the area ranked 1
-has the highest need) in turn for each of the metrics, i.e. fuel
-poverty, universal credit and pension credit.</p>
+has the highest need) by fuel poverty risk and then the proportion of
+households deprived in all 4 dimensions, 3, 2 and only 1.</p>
 </div>
 <div id="combining-the-data" class="section level3">
 <h3>Combining the data</h3>
-<p>The final stage is to combine the rankings into one overall ranking.
-This is done by summing the rank for each of the metrics and then
-ordering by that sum in descending order and calculating the new overall
-rank. In addition to the rank we will also calculate the decile for use
-in choropleth mapping.</p>
+<p>The final stage is to add an overall rankings. In addition to the
+rank we will also calculate the deciles for each metric and overall for
+use in choropleth mapping.</p>
 </div>
 </div>
 </div>
