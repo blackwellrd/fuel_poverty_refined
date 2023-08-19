@@ -83,7 +83,7 @@ For each NHS England region the and for each Integrated Care Board in that regio
 
 ### Full refined fuel poverty risk data
 
-The file fp_refined.csv in the fp_refined.zip file consisted of the following fields
+The file fp_refined.csv in the fp_refined.zip file consists of the following fields
 
  - `oa21cd`, `lsoa21cd` and `msoa21cd`	- 2021 Output Area, Lower-Layer Super Output Area and Middle-layer Super Output Area codes respectively
  - `lad22nm` - 2022 Local Authority Name 
@@ -95,12 +95,17 @@ The file fp_refined.csv in the fp_refined.zip file consisted of the following fi
  - `fp_rank` - Rank of percentage of households in LSOA deemed to be fuel poor (where rank 1 is the LSOA with the highest percentage of households deemed to be fuel poor)
  - `hp4_rank`, `hp3_rank`, `hp2_rank` and `hp1_rank` - Rank of percentage of households in OA deprived in all 4, 3, 2 and 1 dimension respectively (where rank 1 is the OA with the highest percentage of households deprived in that number of dimensions)
  - `hp0_rank`	- Rank of percentage of households in OA not deprived in any dimension (where rank 1 is the OA with the **lowest** percentage of households not deprived in any dimension)
- - `overall_rank`	
- - `fp_decile`	
- - `hp4_decile`	
- - `hp3_decile`	
- - `hp2_decile`	
- - `hp1_decile`	
- - `hp0_decile`	
- - `overall_decile`
+ - `overall_rank`	- Oveall rank based on fuel poverty and household deprivation (where rank 1 is the OA with the highest risk of fuel poverty and household deprivation)
+ - `fp_decile`, `hp4_decile`, `hp3_decile`, `hp2_decile`, `hp1_decile`, `hp0_decile`, `overall_decile`	- Deciles of the all the rank variables listed above (where decile 1 is the 10% of OAs with the highest risk of either fuel poverty or hosuehold deprivation or both for the overall decile)
+
+### ICB postcode and fuel poverty risk data
+
+The ICB level fuel poverty files consists of the following fields
+
+ - `pcds`	- Postcodes that make up the ICB area.
+ - `oa21cd`	- Output Area 2021 that the postcode is in.
+ - `icbcd`	- Integrated Care Board that the postcode is in.
+ - `fp_pct`	- Percentage of households in the Lower-layer Super Output Area 2021 that are deemed to be fuel poor.
+ - `overall_rank`	- Combined fuel poverty and household deprivation rank (where 1 is the output area that is most at risk of fuel poverty and household deprivation)
+ - `overall_decile` - Decile of the `overall_rank` (where 1 is the 10% of output areas most at risk fuel poverty and household deprivation)
 
