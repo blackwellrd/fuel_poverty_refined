@@ -58,7 +58,7 @@ df_oa21_lsoa21_msoa21 <- read.csv(output_area_lookup_file) %>%
 # * 2.4. ICB lookup ----
 # ``````````````````````
 # Read in the ICB lookup, keeping only the essential distinct fields and rename them.
-df_icb <- read.csv(path = icb_lookup_file) %>% 
+df_icb <- read.csv(icb_lookup_file) %>% 
   select(4:9) %>%
   distinct() %>% 
   rename_with(.fn = ~c('ons_icbcd', 'icbcd', 'icbnm', 'ons_nhsercd', 'nhsercd', 'nhsernm')) %>%
@@ -68,12 +68,12 @@ df_icb <- read.csv(path = icb_lookup_file) %>%
                                '_', 
                                gsub('\\W', 
                                     '_', 
-                                    paste0(df_icb$icbcd, '_', df_icb$icbnm)))),
+                                    paste0(icbcd, '_', icbnm)))),
          nhser_label = gsub('__', 
                             '_', 
                             gsub('\\W', 
                                  '_', 
-                                 paste0(df_icb$nhsercd, '_', df_icb$nhsernm))))
+                                 paste0(nhsercd, '_', nhsernm))))
 
 
 # * 2.5. Postcode data ----
@@ -110,14 +110,14 @@ df_fp <- df_fp %>%
     hp3_rank = rank(desc(hd_pct_3), ties.method = 'average'),
     hp2_rank = rank(desc(hd_pct_2), ties.method = 'average'),
     hp1_rank = rank(desc(hd_pct_1), ties.method = 'average'),
-    hp0_rank = rank(asc(hd_pct_0), ties.method = 'average'),
+    hp0_rank = rank(hd_pct_0, ties.method = 'average'),
     overall_rank = seq_along(oa21cd),
     fp_decile = ntile(desc(fp_pct), n = 10),
     hp4_decile = ntile(desc(hd_pct_4), n = 10),
     hp3_decile = ntile(desc(hd_pct_3), n = 10),
     hp2_decile = ntile(desc(hd_pct_2), n = 10),
     hp1_decile = ntile(desc(hd_pct_1), n = 10),
-    hp0_decile = ntile(asc(hd_pct_0), n = 10)
+    hp0_decile = ntile(hd_pct_0, n = 10)
   ) %>% 
   mutate(overall_decile = ntile(overall_rank, n = 10))
 
