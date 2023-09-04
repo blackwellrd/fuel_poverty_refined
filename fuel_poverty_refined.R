@@ -149,10 +149,12 @@ for(nhser in df_icb %>% distinct(ons_nhsercd) %>% .$ons_nhsercd){
                 '.csv')
     write.csv(df_pcd %>% 
                 filter(icbcd == icb) %>%
+                inner_join(df_icb %>% transmute(icbcdh = icbcd, icbcd = ons_icbcd), by = 'icbcd') %>%
                 inner_join(df_fp %>% 
                              select(oa21cd, lad22nm, fp_pct, overall_rank, overall_decile),
                            by = 'oa21cd') %>%
-                arrange(pcds),
+                arrange(pcds) %>%
+                select(pcds, oa21cd, lad22nm, icbcdh, fp_pct, overall_rank, overall_decile),
               f,
               row.names = FALSE)
     zip(gsub('\\.csv', '\\.zip', f), f, flags = "-mjD")
