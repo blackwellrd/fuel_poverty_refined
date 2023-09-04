@@ -150,7 +150,7 @@ for(nhser in df_icb %>% distinct(ons_nhsercd) %>% .$ons_nhsercd){
     write.csv(df_pcd %>% 
                 filter(icbcd == icb) %>%
                 inner_join(df_fp %>% 
-                             select(oa21cd, fp_pct, overall_rank, overall_decile),
+                             select(oa21cd, lad22nm, fp_pct, overall_rank, overall_decile),
                            by = 'oa21cd') %>%
                 arrange(pcds),
               f,
